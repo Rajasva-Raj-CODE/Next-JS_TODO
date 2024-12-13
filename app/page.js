@@ -1,16 +1,45 @@
+"use client";
 import Todo from "@/Components/Todo";
+import { useState } from "react";
 
 export default function Home() {
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+  });
+
+  const onChangeHandler = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    console.log(formData);
+  };
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+  };
+
   return (
     <>
-      <form className="flex items-start flex-col gap-2 w-[80%] max-w-[600px] mt-24 px-2 mx-auto">
+      <form
+        className="flex items-start flex-col gap-2 w-[80%] max-w-[600px] mt-24 px-2 mx-auto"
+        onSubmit={onSubmitHandler}
+      >
         <input
+          onChange={onChangeHandler}
+          value={formData.title}
           type="text"
           name="title"
           placeholder="Enter title"
           className="px-3 py-2 border-2 w-full"
         />
         <textarea
+          onChange={onChangeHandler}
+          value={formData.description}
           name="description"
           placeholder="Enter description"
           className="px-3 py-2 border-2 w-full"
