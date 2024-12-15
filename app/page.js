@@ -18,6 +18,10 @@ export default function Home() {
     setTodoData(response.data.todos);
   };
 
+  useEffect(() => {
+    fetchTodo();
+  }, []);
+
   const deleteTodo = async (id) => {
     const response = await axios.delete("/api", {
       params: {
@@ -29,18 +33,16 @@ export default function Home() {
   };
 
   const completeTodo = async (id) => {
-    const response = await axios.put("/api",{}, {
-      params: {
-        mongoId: id,
-      },
-    });
+    const response = await axios.put(
+      "/api",{},{
+        params: {
+          mongoId:id
+        },
+      }
+    );
     toast.success(response.data.msg);
     fetchTodo();
   };
-
-  useEffect(() => {
-    fetchTodo();
-  }, []);
 
   const onChangeHandler = (e) => {
     const name = e.target.name;
