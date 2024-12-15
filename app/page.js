@@ -18,6 +18,26 @@ export default function Home() {
     setTodoData(response.data.todos);
   };
 
+  const deleteTodo = async (id) => {
+    const response = await axios.delete("/api", {
+      params: {
+        mongoId: id,
+      },
+    });
+    toast.success(response.data.msg);
+    fetchTodo();
+  };
+
+  const completeTodo = async (id) => {
+    const response = await axios.put("/api",{}, {
+      params: {
+        mongoId: id,
+      },
+    });
+    toast.success(response.data.msg);
+    fetchTodo();
+  };
+
   useEffect(() => {
     fetchTodo();
   }, []);
@@ -42,6 +62,7 @@ export default function Home() {
         title: "",
         description: "",
       });
+      await fetchTodo();
     } catch (error) {
       toast.error("Error");
     }
@@ -104,10 +125,13 @@ export default function Home() {
               return (
                 <Todo
                   key={index}
-                  id={item._id}
+                  id={index}
                   title={item.title}
                   description={item.description}
                   isCompleted={item.isCompleted}
+                  mongoId={item._id}
+                  deleteTodo={deleteTodo}
+                  completeTodo={completeTodo}
                 />
               );
             })}
