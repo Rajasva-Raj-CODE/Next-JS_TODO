@@ -1,6 +1,6 @@
 "use client";
 import Todo from "@/Components/Todo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,6 +10,17 @@ export default function Home() {
     title: "",
     description: "",
   });
+
+  const [todoData, setTodoData] = useState([]);
+
+  const fetchTodo = async () => {
+    const response = await axios.get("/api");
+    setTodoData(response.data.todos);
+  };
+
+  useEffect(() => {
+    fetchTodo();
+  }, []);
 
   const onChangeHandler = (e) => {
     const name = e.target.name;
@@ -23,19 +34,22 @@ export default function Home() {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-   try {
-    //api code
-    
-
-    toast.success("Todo added successfully");
-   } catch (error) {
-    toast.error("Error");
-   }
+    try {
+      //api code
+      const response = await axios.post("/api", formData);
+      toast.success(response.data.msg);
+      setFormData({
+        title: "",
+        description: "",
+      });
+    } catch (error) {
+      toast.error("Error");
+    }
   };
 
   return (
     <>
-      <ToastContainer  theme="dark" />
+      <ToastContainer theme="dark" />
       <form
         className="flex items-start flex-col gap-2 w-[80%] max-w-[600px] mt-24 px-2 mx-auto"
         onSubmit={onSubmitHandler}
@@ -86,9 +100,17 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            <Todo />
-            <Todo />
-            <Todo />
+            {todoData.map((item, index) => {
+              return (
+                <Todo
+                  key={index}
+                  id={item._id}
+                  title={item.title}
+                  description={item.description}
+                  isCompleted={item.isCompleted}
+                />
+              );
+            })}
           </tbody>
         </table>
       </div>
